@@ -1,0 +1,14 @@
+CREATE TABLE messages (
+    id INTEGER PRIMARY KEY NOT NULL,
+    message TEXT NOT NULL
+);
+CREATE INDEX messages_full_message ON messages(message);
+
+selectAll:
+SELECT * FROM messages;
+
+insert:
+INSERT INTO messages(message) VALUES (?);
+
+find:
+SELECT * FROM messages WHERE id = (?);

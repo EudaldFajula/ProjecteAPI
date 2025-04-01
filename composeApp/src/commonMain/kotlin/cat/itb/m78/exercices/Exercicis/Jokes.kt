@@ -1,6 +1,7 @@
 package cat.itb.m78.exercices.Exercicis
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateOf
@@ -18,10 +19,9 @@ import kotlinx.coroutines.launch
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import cat.itb.m78.exercices.Exercicis.MyApiJokes.changeListJokes as changeListJokes1
 
 @Serializable
-data class Jokes(@SerialName("id") val id: Int, @SerialName("type") val typeJoke: String, @SerialName("setup") val inicJoke: String, @SerialName("punchline") val finishJoke: String)
+data class Jokes(@SerialName("setup") val inicJoke: String, @SerialName("punchline") val finishJoke: String)
 
 object MyApiJokes{
      val url = "https://api.sampleapis.com/jokes/goodJokes"
@@ -32,18 +32,14 @@ object MyApiJokes{
             })
         }
     }
-    private suspend fun list() = client.get(url).body<List<Jokes>>()
-    suspend fun changeListJokes(): List<Jokes>{
-        val listJokes = list()
-        return listJokes
-    }
+    suspend fun list() = client.get(url).body<List<Jokes>>()
 }
 
 class ViewModelJokes(): ViewModel(){
     val data = mutableStateOf<Jokes?>(null)
     init{
         viewModelScope.launch(Dispatchers.Default){
-            data.value = MyApiJokes.changeListJokes().random()
+            data.value = MyApiJokes.list().random()
         }
     }
 }
@@ -58,7 +54,7 @@ fun JokesFun(){
 fun JokesFun(listJokes: Jokes?){
     val viewModel = viewModel { ViewModelJokes() }
     if(viewModel.data.value  == null){
-        Text("Loading..")
+        CircularProgressIndicator()
     }else{
         Column{
             Text("Setup: " + listJokes!!.inicJoke)
