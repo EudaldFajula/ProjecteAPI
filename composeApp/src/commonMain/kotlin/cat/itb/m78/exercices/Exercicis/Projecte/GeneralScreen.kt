@@ -1,5 +1,6 @@
 package cat.itb.m78.exercices.Exercicis.Projecte
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,43 +28,50 @@ import coil3.compose.AsyncImage
 @Composable
 fun GeneralScreenVM(navigateToFocusGame: (id: Int) -> Unit) {
     val model = viewModel { GamesViewModel() }
-    GeneralScreen(model.gameList.value, navigateToFocusGame)
+    GeneralScreen(model.gameList.value, navigateToFocusGame, model::searchGame)
 }
 
 @Composable
-fun GeneralScreen(games: List<Game>, navigateToFocusGame: (id: Int) -> Unit) {
+fun GeneralScreen(games: List<Game>, navigateToFocusGame: (id: Int) -> Unit, searchGame: (String) -> Unit) {
     var text by remember { mutableStateOf("") }
     if (games == null){
         CircularProgressIndicator()
     }else{
-        LazyColumn(modifier = Modifier.padding(15.dp), verticalArrangement = Arrangement.spacedBy(15.dp)) {
-            itemsIndexed(games) { _, game ->
-                Column {
-                    TextField(text,
-                        label = { Text("Search") },
-                        onValueChange = {
-                            text = it
-                        })
-                    Button(onClick = {}){
-                        Text("Buscar")
+        Column {
+            TextField(text,
+                label = { Text("Search") },
+                onValueChange = {
+                    text = it
+                })
+            Button(onClick = {searchGame(text)}){
+                Text("Buscar")
+            }
+            LazyColumn(modifier = Modifier.padding(15.dp), verticalArrangement = Arrangement.spacedBy(15.dp)) {
+                val filteredList = games.filter { it.title.contains(text, ignoreCase = true) }
+                if (filteredList.isEmpty()) {
+                    item {
+                        Text("No games found")
                     }
                 }
-                Card(modifier = Modifier.fillMaxWidth()) {
-                    Column(modifier = Modifier.padding(end = 15.dp), verticalArrangement = Arrangement.spacedBy(15.dp)) {
-                        Button(onClick = {navigateToFocusGame(game.idGame)}, modifier = Modifier.height(500.dp).fillMaxWidth()){
-                            Column {
-                                Text( "Game Id: " +  game.idGame)
-                                AsyncImage(
-                                    model = game.image,
-                                    contentDescription = null,
-                                    modifier = Modifier.height(300.dp).width(320.dp)
-                                )
-                                Text( "Game Title: " +  game.title)
-                                Text("Game Genre: " + game.genre)
-                            }
-                        }
-                    }
 
+                itemsIndexed(filteredList) { _, game ->
+
+                    Card(modifier = Modifier.fillMaxWidth().clickable(
+                        enabled = true,
+                        onClickLabel = "Clickable card",
+                        onClick = {
+                            navigateToFocusGame(game.idGame)
+                        }))
+                    {
+                        Text("Game Id: " + game.idGame)
+                        AsyncImage(
+                            model = game.image,
+                            contentDescription = null,
+                            modifier = Modifier.height(300.dp).width(320.dp)
+                        )
+                        Text("Game Title: " + game.title)
+                        Text("Game Genre: " + game.genre)
+                    }
                 }
             }
         }

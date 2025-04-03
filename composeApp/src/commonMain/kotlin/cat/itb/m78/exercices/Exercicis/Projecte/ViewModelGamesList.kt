@@ -13,4 +13,9 @@ class GamesViewModel : ViewModel() {
             gameList.value = ApiGame.list()
         }
     }
+    fun searchGame(game: String) {
+        if(game != ""){
+            gameList.value.filter {it.title.contains(game, ignoreCase = true)}
+        }
+    }
 }

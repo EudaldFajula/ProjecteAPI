@@ -1,0 +1,16 @@
+CREATE TABLE freegames(
+    id INTEGER PRIMARY KEY NOT NULL,
+    game_id INTEGER NOT NULL,
+    title_game TEXT NOT NULL,
+    genre_game TEXT NOT NULL
+);
+CREATE INDEX freegames_index ON freegames(game_id);
+
+selectAll:
+SELECT * FROM freegames;
+
+insert:
+INSERT INTO freegames(game_id, title_game, genre_game) VALUES (?, ?, ?);
+
+findByGameId:
+SELECT * FROM freegames WHERE game_id = ?;

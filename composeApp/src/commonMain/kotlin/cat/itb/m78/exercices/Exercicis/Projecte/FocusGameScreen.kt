@@ -22,11 +22,11 @@ import coil3.compose.AsyncImage
 @Composable
 fun FocusGameScreenVM(id: Int, navigateToGeneralScreen: () -> Unit ){
     val model = viewModel { FocusGameViewModel(id) }
-    FocusGameScreen(navigateToGeneralScreen, model.selectedGame.value)
+    FocusGameScreen(navigateToGeneralScreen, model.selectedGame.value, model::insert)
 }
 
 @Composable
-fun FocusGameScreen(navigateToGeneralScreen: () -> Unit, selectedGame: Game?){
+fun FocusGameScreen(navigateToGeneralScreen: () -> Unit, selectedGame: Game?, insertGame: (Int, String, String) -> Unit){
     if(selectedGame == null){
         CircularProgressIndicator()
     }else{
@@ -44,6 +44,9 @@ fun FocusGameScreen(navigateToGeneralScreen: () -> Unit, selectedGame: Game?){
                 Text("Developer: " + selectedGame.developer)
                 Button(onClick = navigateToGeneralScreen){
                     Text("Go Back")
+                }
+                Button(onClick = {insertGame(selectedGame.idGame, selectedGame.title, selectedGame.genre)}){
+                    Text("Favorite")
                 }
             }
         }

@@ -21,6 +21,15 @@ data class Game(@SerialName("id") val idGame: Int,
                 @SerialName("developer") val developer : String,
                 @SerialName("release_date") val releaseDate : String)
 
+@Serializable
+data class Favouritegames(@SerialName("id") val idDataBase: Long,
+    @SerialName("game_id") val idGame: Long,
+    @SerialName("title_game") val titleGame: String,
+    @SerialName("genre_ganem") val genreGame: String)
+
+
+
+
 object ApiGame {
     private const val URL = "https://www.freetogame.com/api/games"
     private const val URLFind = "https://www.freetogame.com/api/game?id="
