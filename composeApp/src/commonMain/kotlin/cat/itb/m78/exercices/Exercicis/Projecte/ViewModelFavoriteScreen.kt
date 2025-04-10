@@ -13,6 +13,10 @@ class FavoriteGameViewModel() : ViewModel() {
     //Data base
     val gameQueries = database.freeGamesQueries
     var all = gameQueries.selectAll().executeAsList().map { toXXX(it) }
+    var mutableListAll = mutableStateOf(all)
+    fun updateList(){
+        mutableListAll.value = all
+    }
 }
 
 private fun toXXX(db: Freegames) = Favouritegames(
@@ -20,4 +24,5 @@ private fun toXXX(db: Freegames) = Favouritegames(
     idGame = db.game_id,
     titleGame = db.title_game,
     genreGame = db.genre_game
+
 )

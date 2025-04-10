@@ -23,11 +23,12 @@ import coil3.compose.AsyncImage
 @Composable
 fun FavoriteGamesScreenVM(navigateToFavoriteGame: () -> Unit){
     val model = viewModel { FavoriteGameViewModel() }
-    FavoriteGamesScreen(model.all)
+    FavoriteGamesScreen(model.mutableListAll.value, model::updateList)
 }
 
 @Composable
-fun FavoriteGamesScreen(games: List<Favouritegames>){
+fun FavoriteGamesScreen(games: List<Favouritegames>, updateList:() -> Unit){
+    updateList()
     if (games == null){
         CircularProgressIndicator()
     }else{

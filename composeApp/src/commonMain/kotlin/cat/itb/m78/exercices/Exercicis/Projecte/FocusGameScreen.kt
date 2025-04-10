@@ -14,24 +14,29 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import cat.itb.m78.exercices.db.Freegames
 import coil3.compose.AsyncImage
 
 @Composable
 fun FocusGameScreenVM(id: Int, navigateToGeneralScreen: () -> Unit ){
     val model = viewModel { FocusGameViewModel(id) }
-    FocusGameScreen(navigateToGeneralScreen, model.selectedGame.value, model::insert)
+    FocusGameScreen(navigateToGeneralScreen, model.selectedGame.value, model::insert, model.textFavoriteAlready.value)
 }
 
 @Composable
-fun FocusGameScreen(navigateToGeneralScreen: () -> Unit, selectedGame: Game?, insertGame: (Int, String, String) -> Unit){
+fun FocusGameScreen(navigateToGeneralScreen: () -> Unit, selectedGame: Game?, insertGame: (Int, String, String) -> Unit, text: String){
+
     if(selectedGame == null){
         CircularProgressIndicator()
     }else{
         Row(){
             Column(){
+                Text(text)
                 Text("Id: " + selectedGame.idGame)
                 Text("Name: " + selectedGame.title)
                 AsyncImage(
@@ -45,7 +50,8 @@ fun FocusGameScreen(navigateToGeneralScreen: () -> Unit, selectedGame: Game?, in
                 Button(onClick = navigateToGeneralScreen){
                     Text("Go Back")
                 }
-                Button(onClick = {insertGame(selectedGame.idGame, selectedGame.title, selectedGame.genre)}){
+                Button(onClick = {
+                    insertGame(selectedGame.idGame, selectedGame.title, selectedGame.genre)}){
                     Text("Favorite")
                 }
             }

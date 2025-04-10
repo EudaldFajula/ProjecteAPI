@@ -12,6 +12,7 @@ import kotlinx.coroutines.launch
 class FocusGameViewModel(id: Int) : ViewModel() {
     //API
     var selectedGame = mutableStateOf<Game?>(null)
+
     init {
         viewModelScope.launch(Dispatchers.Default) {
             selectedGame.value = ApiGame.selectGame(id)
@@ -22,7 +23,19 @@ class FocusGameViewModel(id: Int) : ViewModel() {
 
     var all = gameQueries.selectAll().executeAsList()
     val one = gameQueries.findByGameId(id.toLong()).executeAsList()
+    val allId =  gameQueries.selectAllId().executeAsList()
+
+    var textFavoriteAlready = mutableStateOf("")
     fun insert(id: Int, game_title : String, game_genre : String){
+        comprobarId(id)
         gameQueries.insert(id.toLong(), game_title, game_genre)
+    }
+    private fun comprobarId(id: Int){
+        for(i in allId){
+            if(id.toLong() == i){
+                textFavoriteAlready.value = "Already in Favourites!!!"
+                gameQueries.delete(id.toLong())
+            }
+        }
     }
 }

@@ -12,5 +12,11 @@ SELECT * FROM freegames;
 insert:
 INSERT INTO freegames(game_id, title_game, genre_game) VALUES (?, ?, ?);
 
+selectAllId:
+SELECT game_id FROM freegames;
+
 findByGameId:
 SELECT * FROM freegames WHERE game_id = ?;
+
+delete:
+DELETE FROM freegames WHERE game_id = ?;
