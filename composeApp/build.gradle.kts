@@ -80,6 +80,12 @@ kotlin {
             implementation(libs.kotlinx.coroutines.android)
             implementation(libs.ktor.client.okhttp)
             implementation("app.cash.sqldelight:android-driver:2.0.2")
+            implementation("com.google.accompanist:accompanist-permissions:0.37.2")
+            implementation("androidx.camera:camera-core:1.5.0-alpha06")
+            implementation("androidx.camera:camera-camera2:1.5.0-alpha06")
+            implementation("androidx.camera:camera-compose:1.5.0-alpha06")
+            implementation("androidx.camera:camera-lifecycle:1.5.0-alpha06")
+            implementation("androidx.camera:camera-extensions:1.5.0-alpha06")
         }
 
         jvmMain.dependencies {
@@ -102,7 +108,7 @@ android {
     compileSdk = 35
 
     defaultConfig {
-        minSdk = 21
+        minSdk = 25
         targetSdk = 35
 
         applicationId = "cat.itb.m78.exercices.androidApp"
@@ -113,16 +119,16 @@ android {
     }
 }
 
-//https://developer.android.com/develop/ui/compose/testing#setup
-dependencies {
-    implementation(libs.androidx.room.common)
-    implementation(libs.androidx.ui.android)
-    implementation(libs.androidx.room.common.jvm)
-    implementation(libs.androidx.material3.android)
-    implementation(libs.androidx.foundation.android)
-    androidTestImplementation(libs.androidx.uitest.junit4)
-    debugImplementation(libs.androidx.uitest.testManifest)
-}
+////https://developer.android.com/develop/ui/compose/testing#setup
+//dependencies {
+//    implementation(libs.androidx.room.common)
+//    implementation(libs.androidx.ui.android)
+//    implementation(libs.androidx.room.common.jvm)
+//    implementation(libs.androidx.material3.android)
+//    implementation(libs.androidx.foundation.android)
+//    androidTestImplementation(libs.androidx.uitest.junit4)
+//    debugImplementation(libs.androidx.uitest.testManifest)
+//}
 
 compose.desktop {
     application {

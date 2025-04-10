@@ -11,10 +11,10 @@ class AppActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContent { App() }
+        setContent { LibNavScreenSample() }
     }
 }
 
 @Preview
 @Composable
-fun AppPreview() { App() }
+fun AppPreview() { LibNavScreenSample() }
