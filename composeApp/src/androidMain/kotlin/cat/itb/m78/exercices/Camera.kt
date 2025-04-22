@@ -73,7 +73,7 @@ private fun FeatureThatRequiresCameraPermission(navigateToCameraScreen:() -> Uni
 @Composable
 fun CameraScreen(navigateToPhotosScreen:() -> Unit){
 
-    val viewModel = viewModel{CameraViewModel() }
+    val viewModel = viewModel{ CameraViewModel() }
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     LaunchedEffect(lifecycleOwner) {
@@ -89,6 +89,9 @@ fun CameraScreen(navigateToPhotosScreen:() -> Unit){
             )
             Button({ takePhoto(context, imageCaptureUseCase) }){
                 Text("Take Photo")
+            }
+            Button({navigateToPhotosScreen()}){
+                Text("See the taken photos")
             }
         }
     }
