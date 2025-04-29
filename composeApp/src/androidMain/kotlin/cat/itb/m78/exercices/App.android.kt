@@ -1,5 +1,6 @@
 package cat.itb.m78.exercices
 
+import ProjecteMapsAndCamera.NavigationMapsAndCamera
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -11,10 +12,10 @@ class AppActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContent { LibNavScreenSample() }
+        setContent { NavigationMapsAndCamera() }
     }
 }
 
 @Preview
 @Composable
-fun AppPreview() { LibNavScreenSample() }
+fun AppPreview() { NavigationMapsAndCamera() }
