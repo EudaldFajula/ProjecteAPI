@@ -10,6 +10,8 @@ import kotlinx.serialization.Serializable
 
 object MapsAndCamera{
     @Serializable
+    data object DrawerMenu
+    @Serializable
     data object PermisionScreen
     @Serializable
     data object MapScreen
@@ -23,26 +25,41 @@ object MapsAndCamera{
 fun NavigationMapsAndCamera() {
     val navController = rememberNavController()
     NavHost(navController = navController, startDestination = MapsAndCamera.PermisionScreen) {
+        composable<MapsAndCamera.DrawerMenu>{
+            DrawerMenu(
+                content = {},
+                navigateToMapScreen = { navController.navigate(MapsAndCamera.MapScreen) },
+                navigateToListMarkerScreen = { navController.navigate(MapsAndCamera.ListMarkerScreen) },
+                navigateToAddMarkerScreen = { navController.navigate(MapsAndCamera.AddMarkerScreen) }
+            )
+        }
         composable<MapsAndCamera.PermisionScreen> {
             PermisionScreen(
                 navigateToMapScreen = { navController.navigate(MapsAndCamera.MapScreen) },
+                navigateToListMarkerScreen = { navController.navigate(MapsAndCamera.ListMarkerScreen) },
+                navigateToAddMarkerScreen = { navController.navigate(MapsAndCamera.AddMarkerScreen) }
             )
         }
         composable<MapsAndCamera.MapScreen> {
             MapScreen(
+                navigateToMapScreen = { navController.navigate(MapsAndCamera.MapScreen) },
                 navigateToListMarkerScreen = { navController.navigate(MapsAndCamera.ListMarkerScreen) },
                 navigateToAddMarkerScreen = { navController.navigate(MapsAndCamera.AddMarkerScreen) }
             )
         }
         composable<MapsAndCamera.ListMarkerScreen> {
             ListMarkerScreen(
+                navigateToMapScreen = { navController.navigate(MapsAndCamera.MapScreen) },
+                navigateToListMarkerScreen = { navController.navigate(MapsAndCamera.ListMarkerScreen) },
                 navigateToAddMarkerScreen = { navController.navigate(MapsAndCamera.AddMarkerScreen) }
             )
 
         }
         composable<MapsAndCamera.AddMarkerScreen> {
             AddMarkerScreen(
-                navigateToMapScreen = { navController.navigate(MapsAndCamera.MapScreen) }
+                navigateToMapScreen = { navController.navigate(MapsAndCamera.MapScreen) },
+                navigateToListMarkerScreen = { navController.navigate(MapsAndCamera.ListMarkerScreen) },
+                navigateToAddMarkerScreen = { navController.navigate(MapsAndCamera.AddMarkerScreen) }
             )
 
         }

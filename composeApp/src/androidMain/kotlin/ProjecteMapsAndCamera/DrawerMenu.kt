@@ -34,7 +34,7 @@ import kotlinx.serialization.json.JsonNull.content
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DrawerMenu(
-    content : @Composable (PaddingValues) -> Unit
+    content : @Composable (PaddingValues) -> Unit, navigateToMapScreen: () -> Unit, navigateToListMarkerScreen:() -> Unit, navigateToAddMarkerScreen: () -> Unit
     ) {
         val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
         val scope = rememberCoroutineScope()
@@ -47,38 +47,22 @@ fun DrawerMenu(
                             .verticalScroll(rememberScrollState())
                     ) {
                         Spacer(Modifier.height(12.dp))
-                        Text("Drawer Title", modifier = Modifier.padding(16.dp), style = MaterialTheme.typography.titleLarge)
-                        HorizontalDivider()
 
-                        Text("Section 1", modifier = Modifier.padding(16.dp), style = MaterialTheme.typography.titleMedium)
                         NavigationDrawerItem(
-                            label = { Text("Item 1") },
+                            label = { Text("Map Screen") },
                             selected = false,
-                            onClick = { /* Handle click */ }
+                            onClick = { navigateToMapScreen() }
                         )
                         NavigationDrawerItem(
-                            label = { Text("Item 2") },
+                            label = { Text("Marker List") },
                             selected = false,
-                            onClick = { /* Handle click */ }
-                        )
-
-                        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp))
-
-                        Text("Section 2", modifier = Modifier.padding(16.dp), style = MaterialTheme.typography.titleMedium)
-                        NavigationDrawerItem(
-                            label = { Text("Settings") },
-                            selected = false,
-                            icon = { Icon(Icons.Outlined.Settings, contentDescription = null) },
-                            badge = { Text("20") }, // Placeholder
-                            onClick = { /* Handle click */ }
+                            onClick = { navigateToListMarkerScreen() }
                         )
                         NavigationDrawerItem(
-                            label = { Text("Help and feedback") },
+                            label = { Text("Add Marker") },
                             selected = false,
-                            icon = { Icon(Icons.AutoMirrored.Outlined.Send, contentDescription = null) },
-                            onClick = { /* Handle click */ },
+                            onClick = { navigateToAddMarkerScreen() }
                         )
-                        Spacer(Modifier.height(12.dp))
                     }
                 }
             },
@@ -87,7 +71,7 @@ fun DrawerMenu(
             Scaffold(
                 topBar = {
                     TopAppBar(
-                        title = { Text("Navigation Drawer Example") },
+                        title = { Text("Maps App") },
                         navigationIcon = {
                             IconButton(onClick = {
                                 scope.launch {

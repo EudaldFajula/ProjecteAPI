@@ -7,8 +7,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 @Composable
-fun PermisionScreen(navigateToMapScreen: () -> Unit){
-    DrawerMenu(content = {innerPadding -> Column(modifier = Modifier.padding(innerPadding)){
-        Text("Holi")
-    } })
+fun PermisionScreen(navigateToMapScreen: () -> Unit, navigateToListMarkerScreen:() -> Unit, navigateToAddMarkerScreen: () -> Unit){
+    DrawerMenu(
+        content = { innerPadding ->
+            Column(modifier = Modifier.padding(innerPadding)) {
+                Text("Pantalla de permisos")
+            }
+        },
+        navigateToMapScreen,
+        navigateToListMarkerScreen,
+        navigateToAddMarkerScreen
+    )
 }
