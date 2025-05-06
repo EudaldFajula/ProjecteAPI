@@ -1,0 +1,16 @@
+CREATE TABLE MapsMarkers(
+    id INTEGER PRIMARY KEY NOT NULL,
+    title TEXT NOT NULL,
+    y REAL NOT NULL,
+    x REAL NOT NULL
+);
+CREATE INDEX maps_index ON MapsMarkers (id);
+
+selectAll:
+SELECT * FROM MapsMarkers;
+
+insert:
+INSERT INTO MapsMarkers(title, y, x) VALUES (?, ?, ?);
+
+findByMarkerId:
+SELECT * FROM MapsMarkers WHERE id = ?;
