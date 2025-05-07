@@ -7,7 +7,7 @@ class AddMarkerScreenVM : ViewModel() {
     //Data base
     val mapsMarkerQueries = database.mapsQueries
     var all = mapsMarkerQueries.selectAll().executeAsList()
-    fun insert(title: String, y: Double, x : Double){
-        mapsMarkerQueries.insert(title, y, x)
+    fun insert(title: String, y: Double, x : Double, url : String){
+        mapsMarkerQueries.insert(title, y, x, url)
     }
 }

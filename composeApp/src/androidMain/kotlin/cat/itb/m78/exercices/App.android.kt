@@ -5,17 +5,16 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.tooling.preview.Preview
+import cat.itb.m78.exercices.theme.ContextProvider
 
-class AppActivity : ComponentActivity() {
+class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        ContextProvider.init(this)
         enableEdgeToEdge()
-        setContent { NavigationMapsAndCamera() }
+        setContent {
+            // ← ensure this is your root Composable:
+            NavigationMapsAndCamera()
+        }
     }
 }
-
-@Preview
-@Composable
-fun AppPreview() { NavigationMapsAndCamera() }

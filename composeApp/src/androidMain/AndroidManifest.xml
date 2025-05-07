@@ -13,7 +13,7 @@
             android:name="cat.itb.m78.exercices.theme.ContextProvider"
             android:value="androidx.startup" />
         <activity
-            android:name=".AppActivity"
+            android:name=".MainActivity"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
             android:launchMode="singleInstance"
             android:windowSoftInputMode="adjustPan"

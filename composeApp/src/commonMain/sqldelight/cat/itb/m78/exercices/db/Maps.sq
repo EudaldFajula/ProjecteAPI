@@ -1,16 +1,18 @@
-CREATE TABLE MapsMarkers(
+CREATE TABLE MapsMarkersSave(
     id INTEGER PRIMARY KEY NOT NULL,
     title TEXT NOT NULL,
     y REAL NOT NULL,
-    x REAL NOT NULL
+    x REAL NOT NULL,
+    url TEXT NOT NULL
 );
-CREATE INDEX maps_index ON MapsMarkers (id);
+
+CREATE INDEX maps_index ON MapsMarkersSave (id);
 
 selectAll:
-SELECT * FROM MapsMarkers;
+SELECT * FROM MapsMarkersSave;
 
 insert:
-INSERT INTO MapsMarkers(title, y, x) VALUES (?, ?, ?);
+INSERT INTO MapsMarkersSave(title, y, x, url) VALUES (?, ?, ?, ?);
 
 findByMarkerId:
-SELECT * FROM MapsMarkers WHERE id = ?;
+SELECT * FROM MapsMarkersSave WHERE id = ?;

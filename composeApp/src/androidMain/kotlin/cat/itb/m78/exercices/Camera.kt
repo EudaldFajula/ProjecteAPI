@@ -72,8 +72,7 @@ private fun FeatureThatRequiresCameraPermission(navigateToCameraScreen:() -> Uni
 }
 @Composable
 fun CameraScreen(navigateToPhotosScreen:() -> Unit){
-
-    val viewModel = viewModel{ CameraViewModel() }
+    val viewModel = viewModel{ CameraViewModel1() }
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
     LaunchedEffect(lifecycleOwner) {
@@ -130,7 +129,7 @@ private fun takePhoto(context: Context, imageCapture: ImageCapture) {
     )
 }
 
-class CameraViewModel() : ViewModel(){
+class CameraViewModel1() : ViewModel(){
     val surferRequest = mutableStateOf<SurfaceRequest?>(null)
     private val cameraPreviewUseCase = Preview.Builder().build().apply {
         setSurfaceProvider { newSurfaceRequest ->
