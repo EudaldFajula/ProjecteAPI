@@ -8,20 +8,18 @@ import android.os.Build
 import android.provider.MediaStore
 import android.util.Log
 import androidx.camera.compose.CameraXViewfinder
+import androidx.camera.core.CameraSelector.DEFAULT_BACK_CAMERA
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.ImageCaptureException
 import androidx.camera.core.Preview
 import androidx.camera.core.SurfaceRequest
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.lifecycle.awaitInstance
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
@@ -30,10 +28,8 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import cat.itb.m78.exercices.Exercicis.BDD.database
-import coil3.compose.rememberAsyncImagePainter
 import com.google.accompanist.permissions.*
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.awaitCancellation
 
 /**
  * 1) Pedimos permisos de cámara y, si < Android 10, de almacenamiento
@@ -92,82 +88,77 @@ class CameraViewModel2 : ViewModel() {
     //Data base
     val mapsMarkerQueries = database.mapsQueries
     var all = mapsMarkerQueries.selectAll().executeAsList()
-    fun insert(title: String, y: Double, x : Double, url: String){
+    fun insert(title: String, y: Double, x: Double, url: String) {
         mapsMarkerQueries.insert(title, y, x, url)
     }
 
-    var surfaceRequest by mutableStateOf<SurfaceRequest?>(null)
-        private set
-
-    private val cameraPreview = Preview.Builder()
-        .build()
-        .also { preview ->
-            preview.setSurfaceProvider { req ->
-                surfaceRequest = req
-            }
+    val surferRequest = mutableStateOf<SurfaceRequest?>(null)
+    private val cameraPreviewUseCase = Preview.Builder().build().apply {
+        setSurfaceProvider { newSurfaceRequest ->
+            surferRequest.value = newSurfaceRequest
         }
-
-    val imageCaptureUseCase = ImageCapture.Builder().build()
+    }
+    val imageCaptureUseCase: ImageCapture = ImageCapture.Builder().build()
+    suspend fun bindToCamera(appContext: Context, lifecycleOwner: LifecycleOwner) {
+        val processCameraProvider = ProcessCameraProvider.awaitInstance(appContext)
+        processCameraProvider.bindToLifecycle(
+            lifecycleOwner, DEFAULT_BACK_CAMERA, cameraPreviewUseCase, imageCaptureUseCase
+        )
+        try {
+            awaitCancellation()
+        } finally {
+            processCameraProvider.unbindAll()
+        }
+    }
 
     // NUEVO: flujo con el último URI guardado
-    private val _lastPhotoUri = MutableStateFlow<Uri?>(null)
-    val lastPhotoUri: StateFlow<Uri?> = _lastPhotoUri
+    val lastPhotoUri = mutableStateOf<Uri?>(null)
 
-    fun onPhotoSaved(uri: android.net.Uri) {
-        _lastPhotoUri.value = uri
+    fun onPhotoSaved(uri: Uri) {
+        lastPhotoUri.value = uri
     }
 
-    suspend fun bindToCamera(appContext: Context, lifecycleOwner: LifecycleOwner) {
-        val cameraProvider = ProcessCameraProvider.awaitInstance(appContext)
-        cameraProvider.bindToLifecycle(
-            lifecycleOwner,
-            androidx.camera.core.CameraSelector.DEFAULT_BACK_CAMERA,
-            cameraPreview,
-            imageCaptureUseCase
-        )
-        try { kotlinx.coroutines.awaitCancellation() }
-        finally { cameraProvider.unbindAll() }
-    }
-}
 
-/**
- * 3) takePhoto informado al VM
- */
-private fun takePhoto(
-    context: Context,
-    imageCapture: ImageCapture,
-    viewModel: CameraViewModel2
-) {
-    val name = "photo_${System.nanoTime()}"
-    val values = ContentValues().apply {
-        put(MediaStore.MediaColumns.DISPLAY_NAME, name)
-        put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
-            put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/CameraX-Image")
+    fun takePhoto(context: Context, navigateToAddMarkerScreen: () -> Unit) {
+        val resolver = context.contentResolver
+        val name = "photo_" + System.nanoTime()
+        val contentValues = ContentValues().apply {
+            put(MediaStore.MediaColumns.DISPLAY_NAME, name)
+            put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
+            if (Build.VERSION.SDK_INT > Build.VERSION_CODES.P) {
+                put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/CameraX-Image")
+            }
         }
-    }
-    val outputOpts = ImageCapture.OutputFileOptions
-        .Builder(
+        val outputOptions = ImageCapture.OutputFileOptions.Builder(
             context.contentResolver,
             MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-            values
+            contentValues
         ).build()
-
-    imageCapture.takePicture(
-        outputOpts,
-        ContextCompat.getMainExecutor(context),
-        object : ImageCapture.OnImageSavedCallback {
-            override fun onError(exc: ImageCaptureException) {
-                Log.e("CameraX", "Error al guardar foto: ${exc.message}", exc)
-            }
-            override fun onImageSaved(output: ImageCapture.OutputFileResults) {
-                output.savedUri?.let { uri ->
-                    Log.d("CameraX", "Foto guardada en: $uri")
-                    viewModel.onPhotoSaved(uri)  // informamos al VM
+        imageCaptureUseCase.takePicture(
+            outputOptions,
+            ContextCompat.getMainExecutor(context),
+            object : ImageCapture.OnImageSavedCallback {
+                override fun onError(exc: ImageCaptureException) {
+                    Log.e(
+                        "CameraViewModel",
+                        "Error al tomar foto: ${exc.message}", exc
+                    )
                 }
-            }
-        }
-    )
+
+                override fun onImageSaved(output: ImageCapture.OutputFileResults) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        contentValues.clear()
+                        contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
+                        output.savedUri?.let { resolver.update(it, contentValues, null, null) }
+                    }
+                    Log.d("CameraViewModel", "Foto guardada: ${output.savedUri}")
+                    lastPhotoUri.value = output.savedUri
+                    navigateToAddMarkerScreen()
+
+                }
+
+            })
+    }
 }
 
 /**
@@ -177,28 +168,17 @@ private fun takePhoto(
 fun CameraScreen(
     navigateToAddMarkerScreen: () -> Unit
 ) {
-    val viewModel: CameraViewModel2 = viewModel()
+    val viewModel = viewModel{CameraViewModel2() }
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
-
-    // 1️⃣ Arranca la cámara
-    LaunchedEffect(Unit) {
-        viewModel.bindToCamera(context, lifecycleOwner)
+    LaunchedEffect(lifecycleOwner) {
+        viewModel.bindToCamera(context.applicationContext, lifecycleOwner)
     }
-
-    // 2️⃣ Observa si se ha guardado una URI
-    val savedUri by viewModel.lastPhotoUri.collectAsState()
-
-    // 3️⃣ En cuanto savedUri != null, navega
-    LaunchedEffect(savedUri) {
-        if (savedUri != null) {
-            navigateToAddMarkerScreen()
-        }
-    }
+    val surfaceRequest = viewModel.surferRequest.value
 
     Box(Modifier.fillMaxSize()) {
         // vista previa de la cámara
-        viewModel.surfaceRequest?.let { req ->
+        surfaceRequest?.let { req ->
             CameraXViewfinder(
                 surfaceRequest = req,
                 modifier = Modifier.fillMaxSize()
@@ -214,11 +194,11 @@ fun CameraScreen(
         ) {
             Button(
                 onClick = {
-                    takePhoto(
+                    viewModel.takePhoto(
                         context,
-                        viewModel.imageCaptureUseCase,
-                        viewModel
+                        navigateToAddMarkerScreen
                     )
+
                 },
                 modifier = Modifier.fillMaxWidth()
             ) {
@@ -227,4 +207,8 @@ fun CameraScreen(
         }
     }
 }
+
+
+
+
 

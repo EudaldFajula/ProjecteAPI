@@ -54,18 +54,21 @@ fun ListMarkerScreen(
                                     .padding(16.dp),
                                 verticalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
-                                // 1) If marker.imageUrl is non-null, display it:
-                                marker.url?.let { url ->
-                                    AsyncImage(
-                                        model = url,
-                                        contentDescription = "Marker photo",
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .height(180.dp)
-                                            .clip(RoundedCornerShape(8.dp)),
-                                        contentScale = ContentScale.Crop
-                                    )
-                                    Spacer(modifier = Modifier.height(8.dp))
+                                if(marker.url != null){
+                                    marker.url.let { url ->
+                                        AsyncImage(
+                                            model = url,
+                                            contentDescription = "Marker photo",
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .height(180.dp)
+                                                .clip(RoundedCornerShape(8.dp)),
+                                            contentScale = ContentScale.Crop
+                                        )
+                                        Spacer(modifier = Modifier.height(8.dp))
+                                }
+                                }else{
+                                    Text("ERROR with the photo")
                                 }
                                 Text("Title: ${marker.title}")
                                 Text("X: ${marker.x}")

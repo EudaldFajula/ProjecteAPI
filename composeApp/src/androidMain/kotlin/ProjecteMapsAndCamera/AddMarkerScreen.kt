@@ -1,5 +1,6 @@
 package ProjecteMapsAndCamera
 
+import ProjecteMapsAndCamera.Examen.PhotoGallery
 import android.graphics.Bitmap
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
@@ -32,6 +33,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import coil3.compose.AsyncImage
 import coil3.compose.rememberAsyncImagePainter
 
 @Composable
@@ -44,12 +46,12 @@ fun AddMarkerScreen(
     // Compartimos el mismo VM de cámara para leer la URI
     val cameraViewModel: CameraViewModel2 = viewModel()
 
-    var textTitle by rememberSaveable { mutableStateOf("") }
-    var textX     by rememberSaveable { mutableStateOf("") }
-    var textY     by rememberSaveable { mutableStateOf("") }
+    var textTitle by remember { mutableStateOf("") }
+    var textX     by remember { mutableStateOf("") }
+    var textY     by remember { mutableStateOf("") }
 
     // Recogemos el último URI guardado
-    val photoUri by cameraViewModel.lastPhotoUri.collectAsState()
+    val photoUri = cameraViewModel.lastPhotoUri.value.toString()
 
     DrawerMenu(
         { innerPadding ->
@@ -100,18 +102,18 @@ fun AddMarkerScreen(
                 ) {
                     Text("Take Photo")
                 }
-
-                // Miniatura de la foto guardada
-                photoUri?.let { uri ->
-                    Spacer(Modifier.height(8.dp))
-                    Text("Last photo:")
-                    Image(
-                        painter = rememberAsyncImagePainter(uri),
-                        contentDescription = "Thumbnail",
-                        modifier = Modifier
-                            .clip(RoundedCornerShape(4.dp))
+                PhotoGallery(photoUri)
+                if(photoUri != null){
+                    // Miniatura de la foto guardada
+                    AsyncImage(
+                        model = photoUri,
+                        contentDescription = null
                     )
+
+                }else{
+                    Text("ERROR with the photo")
                 }
+
 
                 Spacer(modifier = Modifier.height(24.dp))
 
