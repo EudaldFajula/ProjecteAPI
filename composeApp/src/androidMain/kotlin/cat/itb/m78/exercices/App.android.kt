@@ -1,20 +1,37 @@
 package cat.itb.m78.exercices
 
-import ProjecteMapsAndCamera.NavigationMapsAndCamera
+
+import RecuperacioMapsAndCamera.MapsAndCamera
+import android.graphics.Camera
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import cat.itb.m78.exercices.theme.ContextProvider
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
+import cat.itb.m78.exercices.theme.AppTheme
 
-class MainActivity : ComponentActivity() {
+class AppActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        ContextProvider.init(this)
         enableEdgeToEdge()
         setContent {
-            // ← ensure this is your root Composable:
-            NavigationMapsAndCamera()
+            AppTheme {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    MapsAndCamera()
+                }
+            }
         }
     }
 }
+
+@Preview
+@Composable
+fun AppPreview() { Camera() }
