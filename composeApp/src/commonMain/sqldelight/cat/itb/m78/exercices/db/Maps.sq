@@ -16,3 +16,6 @@ INSERT INTO MapsMarkersSave(title, y, x, url) VALUES (?, ?, ?, ?);
 
 findByMarkerId:
 SELECT * FROM MapsMarkersSave WHERE id = ?;
+
+delete:
+DELETE FROM MapsMarkersSave WHERE id = ?;

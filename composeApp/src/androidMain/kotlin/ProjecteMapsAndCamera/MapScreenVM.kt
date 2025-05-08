@@ -10,4 +10,7 @@ class MapScreenVM :ViewModel() {
     fun insert(title: String, y: Double, x : Double, url: String){
         mapsMarkerQueries.insert(title, y, x, url)
     }
+    fun delete(id: Int){
+        mapsMarkerQueries.delete(id.toLong())
+    }
 }
