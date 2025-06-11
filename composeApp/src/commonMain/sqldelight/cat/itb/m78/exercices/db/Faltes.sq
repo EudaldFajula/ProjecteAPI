@@ -1,0 +1,22 @@
+CREATE TABLE faltes (
+    id INTEGER PRIMARY KEY NOT NULL,
+    studentId INTEGER NOT NULL,
+    date TEXT NOT NULL
+);
+
+CREATE INDEX faltes_index ON faltes(studentId);
+
+selectAll:
+SELECT * FROM faltes;
+
+insert:
+INSERT INTO faltes(studentId, date) VALUES (?, ?);
+
+findByStudentId:
+SELECT * FROM faltes WHERE studentId = ?;
+
+count:
+SELECT count(*) FROM faltes WHERE studentId = ? GROUP BY id;
+
+selectAllFilterByDate:
+SELECT * FROM faltes ORDER BY date;

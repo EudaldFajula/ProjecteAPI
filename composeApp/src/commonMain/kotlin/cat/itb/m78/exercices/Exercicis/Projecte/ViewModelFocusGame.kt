@@ -5,7 +5,7 @@ import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import cat.itb.m78.exercices.Exercicis.BDD.database
+import cat.itb.m78.exercices.sqldelight.database
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 

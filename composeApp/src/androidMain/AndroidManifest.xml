@@ -1,12 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
-
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-feature android:name="android.hardware.camera" android:required="false" />
     <application
         android:icon="@mipmap/ic_launcher"
         android:label="M78Exercices"
         android:theme="@android:style/Theme.Material.NoActionBar">
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="${MAPS_API_KEY}" />
+        <meta-data
+            android:name="cat.itb.m78.exercices.theme.ContextProvider"
+            android:value="androidx.startup" />
         <activity
-            android:name=".AppActivity"
+            android:name="AppActivity"
             android:configChanges="orientation|screenSize|screenLayout|keyboardHidden"
             android:launchMode="singleInstance"
             android:windowSoftInputMode="adjustPan"
@@ -16,6 +24,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <provider
+            android:name="androidx.startup.InitializationProvider"
+            android:authorities="${applicationId}.androidx-startup"
+            android:exported="false"
+            tools:node="merge">
+            <meta-data
+                android:name="cat.itb.m78.exercices.sqldelight.ContextProvider"
+                android:value="androidx.startup" />
+        </provider>
     </application>
 
 </manifest>

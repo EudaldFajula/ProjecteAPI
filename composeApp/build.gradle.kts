@@ -12,6 +12,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlinx.serialization)
     id("app.cash.sqldelight") version "2.0.2"
+    id("com.google.android.libraries.mapsplatform.secrets-gradle-plugin")
 }
 
 composeCompiler {
@@ -80,6 +81,13 @@ kotlin {
             implementation(libs.kotlinx.coroutines.android)
             implementation(libs.ktor.client.okhttp)
             implementation("app.cash.sqldelight:android-driver:2.0.2")
+            implementation("com.google.accompanist:accompanist-permissions:0.37.2")
+            implementation("androidx.camera:camera-core:1.5.0-alpha06")
+            implementation("androidx.camera:camera-camera2:1.5.0-alpha06")
+            implementation("androidx.camera:camera-compose:1.5.0-alpha06")
+            implementation("androidx.camera:camera-lifecycle:1.5.0-alpha06")
+            implementation("androidx.camera:camera-extensions:1.5.0-alpha06")
+            implementation("com.google.maps.android:maps-compose:6.6.0")
         }
 
         jvmMain.dependencies {
@@ -102,7 +110,7 @@ android {
     compileSdk = 35
 
     defaultConfig {
-        minSdk = 21
+        minSdk = 25
         targetSdk = 35
 
         applicationId = "cat.itb.m78.exercices.androidApp"
@@ -113,16 +121,16 @@ android {
     }
 }
 
-//https://developer.android.com/develop/ui/compose/testing#setup
-dependencies {
-    implementation(libs.androidx.room.common)
-    implementation(libs.androidx.ui.android)
-    implementation(libs.androidx.room.common.jvm)
-    implementation(libs.androidx.material3.android)
-    implementation(libs.androidx.foundation.android)
-    androidTestImplementation(libs.androidx.uitest.junit4)
-    debugImplementation(libs.androidx.uitest.testManifest)
-}
+////https://developer.android.com/develop/ui/compose/testing#setup
+//dependencies {
+//    implementation(libs.androidx.room.common)
+//    implementation(libs.androidx.ui.android)
+//    implementation(libs.androidx.room.common.jvm)
+//    implementation(libs.androidx.material3.android)
+//    implementation(libs.androidx.foundation.android)
+//    androidTestImplementation(libs.androidx.uitest.junit4)
+//    debugImplementation(libs.androidx.uitest.testManifest)
+//}
 
 compose.desktop {
     application {
@@ -150,6 +158,9 @@ compose.desktop {
 tasks.register<ComposeHotRun>("runHot") {
     mainClass.set("HotrunKt")
 }
+dependencies {
+    implementation(libs.androidx.startup.runtime)
+}
 
 sqldelight {
     databases {
@@ -159,4 +170,15 @@ sqldelight {
             verifyMigrations.set(true)
         }
     }
+}
+secrets {
+    // To add your Maps API key to this project:
+    // 1. If the secrets.properties file does not exist, create it in the same folder as the local.properties file.
+    // 2. Add this line, where YOUR_API_KEY is your API key:
+    //        MAPS_API_KEY=YOUR_API_KEY
+    propertiesFileName = "secrets.properties"
+
+    // A properties file containing default secret values. This file can be
+    // checked in version control.
+    defaultPropertiesFileName = "local.defaults.properties"
 }

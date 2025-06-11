@@ -1,4 +1,4 @@
-package cat.itb.m78.exercices.Exercicis.BDD
+package cat.itb.m78.exercices.sqldelight
 
 import app.cash.sqldelight.db.SqlDriver
 import cat.itb.m78.exercices.db.Database
@@ -9,6 +9,5 @@ fun createDatabase(): Database {
     val driver = createDriver()
     return Database(driver)
 }
-val database by lazy {
-    createDatabase()
-}
+
+val database by lazy { createDatabase() }
