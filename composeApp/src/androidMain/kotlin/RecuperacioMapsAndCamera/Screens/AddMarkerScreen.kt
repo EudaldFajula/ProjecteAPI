@@ -53,6 +53,7 @@ import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.android.gms.maps.model.LatLng
 import kotlin.reflect.KFunction1
+import kotlin.reflect.KFunction0
 
 @Composable
 fun AddMarkerScreen(savedStateHandle: SavedStateHandle, navigateToMapScreen: () -> Unit,
@@ -68,21 +69,25 @@ fun AddMarkerScreen(savedStateHandle: SavedStateHandle, navigateToMapScreen: () 
     }
 
     AddMarkerScreenArguments(navigateToMapScreen, navigateToCameraScreen, addMarkerViewModel::addMarker,
-        initialMarker) { marker ->
+        initialMarker, addMarkerViewModel::getLastPhotoUri) { marker ->
         addMarkerViewModel.saveMarkerState(marker)
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddMarkerScreenArguments(navigateToMapScreen: () -> Unit, navigateToCameraScreen: () -> Unit,
-                             addMarker: KFunction1<InsertMarker, Unit>, initialMarker: InsertMarker,
-                             onMarkerChange: (InsertMarker) -> Unit
+fun AddMarkerScreenArguments(
+    navigateToMapScreen: () -> Unit, navigateToCameraScreen: () -> Unit,
+    addMarker: KFunction1<InsertMarker, Unit>, initialMarker: InsertMarker, getLastPhotoUri: KFunction0<String>,
+    onMarkerChange: (InsertMarker) -> Unit
 ) {
     var marker by remember { mutableStateOf(initialMarker) }
     var showDialog by remember { mutableStateOf(false) }
     var showCamera by remember { mutableStateOf(false) }
     var showTitleErrorDialog by remember { mutableStateOf(false) }
+
+    var lastPhotoUri by remember { mutableStateOf("") }
+    lastPhotoUri = getLastPhotoUri()
 
     // Launcher to pick image from gallery
     val pickMedia = rememberLauncherForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
@@ -177,6 +182,20 @@ fun AddMarkerScreenArguments(navigateToMapScreen: () -> Unit, navigateToCameraSc
                             text = if (marker.imageUri.isNotBlank()) "Photo added correctly!" else "Add photo",
                             color = MaterialTheme.colorScheme.onPrimary
                         )
+                    }
+
+                    //Part examen
+                    if (lastPhotoUri != "null"){
+                        Button(
+                            onClick = { marker = marker.copy(imageUri = getLastPhotoUri()) },
+                            enabled = marker.imageUri.isBlank(),
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            Text(
+                                text = if (marker.imageUri.isNotBlank()) "Photo added correctly!" else "Add last taken photo",
+                                color = MaterialTheme.colorScheme.onPrimary
+                            )
+                        }
                     }
 
                     Button(
