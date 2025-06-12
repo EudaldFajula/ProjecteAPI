@@ -1,5 +1,6 @@
 package RecuperacioMapsAndCamera.ViewModels
 
+import RecuperacioMapsAndCamera.PHOTO_URI_KEY
 import android.content.ContentValues
 import android.content.Context
 import android.net.Uri
@@ -19,8 +20,11 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.awaitCancellation
+import com.russhwolf.settings.Settings
 
 class CameraViewModel : ViewModel(){
+    val settings : Settings = Settings()
+
     val surferRequest = mutableStateOf<SurfaceRequest?>(null)
     private val cameraPreviewUseCase = Preview.Builder().build().apply {
         setSurfaceProvider { newSurfaceRequest ->
@@ -77,6 +81,9 @@ class CameraViewModel : ViewModel(){
                     }
                     Log.d("CameraViewModel", "Foto guardada: ${output.savedUri}")
                     _savedPhotoUri.value = output.savedUri
+
+                    //Settings examen
+                    output.savedUri?.let { settings.putString(PHOTO_URI_KEY, it.toString()) }
                 }
             }
         )

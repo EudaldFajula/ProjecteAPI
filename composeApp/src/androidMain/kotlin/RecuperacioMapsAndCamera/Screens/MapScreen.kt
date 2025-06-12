@@ -1,6 +1,7 @@
 package RecuperacioMapsAndCamera.Screens
 
 import RecuperacioMapsAndCamera.ViewModels.MapViewModel
+import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,7 +18,6 @@ import androidx.compose.material3.DrawerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
@@ -55,11 +55,16 @@ fun MapsScreen(navigateToAddMarkerScreen: (Double, Double) -> Unit, drawerState:
     MapsScreenArguments(navigateToAddMarkerScreen, drawerState, scope, viewModel.markerList.value)
 }
 
+@SuppressLint("UnrememberedMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MapsScreenArguments(navigateToAddMarkerScreen: (Double, Double) -> Unit,
                         drawerState: DrawerState, scope: CoroutineScope, markerList: List<SaveMarkers>){
 
+    val itbLocation = LatLng(41.453269958496094, 2.1865615844726562)
+    val cameraPositionState = rememberCameraPositionState {
+        position = CameraPosition.fromLatLngZoom(itbLocation, 15f)
+    }
 
     val bottomSheetState = rememberModalBottomSheetState()
     var longPressPosition by remember { mutableStateOf<LatLng?>(null) }
@@ -98,12 +103,21 @@ fun MapsScreenArguments(navigateToAddMarkerScreen: (Double, Double) -> Unit,
             GoogleMap(
                 modifier = Modifier
                     .fillMaxSize(0.95f)
-                    .clip(shape = RoundedCornerShape(20.dp)), 
+                    .clip(shape = RoundedCornerShape(20.dp)),
+                cameraPositionState = cameraPositionState,
                 onMapLongClick = { latLng ->
                     longPressPosition = latLng
                     showDialog = true
                 }
             ) {
+                //Marcador ITB examen
+                Marker(
+                    state = MarkerState(position = itbLocation),
+                    title = "Institut Tecnològic de Barcelona",
+                    snippet = "ITB",
+                    icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE)
+                )
+
                 //Marcadors guardats a la BBDD
                 markerList.forEach { marker ->
                     AdvancedMarker(
@@ -113,15 +127,6 @@ fun MapsScreenArguments(navigateToAddMarkerScreen: (Double, Double) -> Unit,
                     )
                 }
 
-                //Marcador que surt al pulsar
-                longPressPosition?.let { pos ->
-                    Marker(
-                        state = MarkerState(pos),
-                        title = "New marker",
-                        snippet = "Touch to add",
-                        icon = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_YELLOW)
-                    )
-                }
             }
 
             if (showDialog && longPressPosition != null) {

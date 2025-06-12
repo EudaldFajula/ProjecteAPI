@@ -2,14 +2,19 @@ package RecuperacioMapsAndCamera.ViewModels
 
 import RecuperacioMapsAndCamera.InsertMarker
 import RecuperacioMapsAndCamera.PHOTO_URI_KEY
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import cat.itb.m78.exercices.sqldelight.database
+import com.russhwolf.settings.Settings
 
 class AddMarkerViewModel(private val savedStateHandle: SavedStateHandle) : ViewModel(){
+    //Settings examen
+    private val settings : Settings = Settings()
+
+    fun getLastPhotoUri() : String {
+        return settings.getString(PHOTO_URI_KEY, "null")
+    }
+
     //Database
     private val dbQueries = database.mapsQueries
 
